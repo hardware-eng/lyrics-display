@@ -3,37 +3,108 @@
 <head>
   <title>Lyrics</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body {
-      background: black;
-      color: white;
-      font-size: 34px;
-      line-height: 1.7;
-      padding: 25px;
-      font-family: Arial, sans-serif;
+    :root {
+      --bg: black;
+      --text: white;
     }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-size: 32px;
+      line-height: 1.7;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      transition: 0.3s;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 20px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    select {
+      font-size: 20px;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
     h2 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-top: 20px;
     }
   </style>
 </head>
+
 <body>
 
-<h2>Bhajan Title</h2>
+<div class="top-bar">
+  <select onchange="loadSong(this.value)">
+    <option value="yaman">Raag Yaman</option>
+    <option value="pilu">Raag Pilu</option>
+    <option value="shiv">Shivranjani</option>
+  </select>
 
-<p>
-Line 1<br>
-Line 2<br><br>
+  <button onclick="toggleTheme()">Toggle Theme</button>
+</div>
 
-Line 3<br>
-Line 4<br>
-</p>
+<h2 id="title"></h2>
+<p id="lyrics"></p>
 
 <script>
-  // auto-scroll
-  let speed = 0.3;
-  setInterval(() => window.scrollBy(0, speed), 50);
+  const songs = {
+    yaman: {
+      title: "Raag Yaman",
+      lyrics: `Sa re ga ma pa...
+Ma pa dha ni sa...
+
+(Your lyrics here)`
+    },
+    pilu: {
+      title: "Raag Pilu",
+      lyrics: `Line 1
+Line 2
+
+Line 3`
+    },
+    shiv: {
+      title: "Shivranjani",
+      lyrics: `Line A
+Line B
+
+Line C`
+    }
+  };
+
+  function loadSong(key) {
+    document.getElementById("title").innerText = songs[key].title;
+    document.getElementById("lyrics").innerText = songs[key].lyrics;
+  }
+
+  function toggleTheme() {
+    const root = document.documentElement;
+    if (root.style.getPropertyValue('--bg') === 'white') {
+      root.style.setProperty('--bg', 'black');
+      root.style.setProperty('--text', 'white');
+    } else {
+      root.style.setProperty('--bg', 'white');
+      root.style.setProperty('--text', 'black');
+    }
+  }
+
+  // load default
+  loadSong("yaman");
 </script>
 
 </body>
