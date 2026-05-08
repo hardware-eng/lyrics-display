@@ -1,201 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="sa">
 <head>
+  <meta charset="UTF-8">
   <title>Lyrics</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     :root {
-      --bg: black;
-      --text: white;
+      --bg: #000;
+      --text: #fff;
+      --muted: #888;
+      --btn-bg: #222;
+      --btn-text: #fff;
+      --select-bg: #222;
     }
-
+    body.light {
+      --bg: #fff;
+      --text: #000;
+      --muted: #555;
+      --btn-bg: #ddd;
+      --btn-text: #000;
+      --select-bg: #eee;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: var(--bg);
       color: var(--text);
-      font-size: 32px;
-      line-height: 1.7;
-      padding: 20px;
       font-family: Arial, sans-serif;
-      transition: 0.3s;
+      font-size: 30px;
+      line-height: 1.8;
+      padding: 16px;
+      transition: background 0.2s, color 0.2s;
     }
-
     .top-bar {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
     }
-
+    select {
+      flex: 1;
+      font-size: 22px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: none;
+      background: var(--select-bg);
+      color: var(--text);
+      min-width: 0;
+    }
     button {
-      font-size: 20px;
-      padding: 10px 15px;
+      font-size: 22px;
+      padding: 10px 18px;
       border-radius: 10px;
       border: none;
       cursor: pointer;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      white-space: nowrap;
     }
-
-    select {
+    #content {
+      white-space: pre-wrap;
+      word-break: break-word;
+      padding-top: 8px;
+    }
+    #status {
+      color: var(--muted);
       font-size: 20px;
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    h2 {
-      text-align: center;
-      margin-top: 20px;
+      padding: 20px 0;
     }
   </style>
 </head>
-
 <body>
 
 <div class="top-bar">
-  <select onchange="loadSong(this.value)">
-    <option value="yaman">भजगोविन्दं </option>
-    <option value="pilu">KrishnaShtakam</option>
-    <option value="shiv">Shivranjani</option>
+  <select id="picker" onchange="loadFile(this.value)">
+    <option value="">— select —</option>
   </select>
-
-  <button onclick="toggleTheme()">Toggle Theme</button>
+  <button onclick="toggleTheme()">☀ / ☾</button>
 </div>
 
-<h2 id="title"></h2>
-<p id="lyrics"></p>
+<div id="status"></div>
+<div id="content"></div>
 
 <script>
-  const songs = {
-    yaman: {
-      title: "भजगोविन्दं ",
-      lyrics: `
-      भजगोविन्दं भजगोविन्दं
-गोविन्दं भजमूढमते .
-संप्राप्ते सन्निहिते काले
-नहि नहि रक्षति डुकृञ्करणे .. १..(1)
+  const MANIFEST = [
+    { label: "BG Adhyay 01", path: "lyrics/bhagvad_gita/adhyay_01.txt" },
+    { label: "BG Adhyay 03", path: "lyrics/bhagvad_gita/adhyay_03.txt" },
+    { label: "BG Adhyay 10", path: "lyrics/bhagvad_gita/adhyay_10.txt" },
+    { label: "BG Adhyay 15", path: "lyrics/bhagvad_gita/adhyay_15.txt" },
+    { label: "BG Adhyay 16", path: "lyrics/bhagvad_gita/adhyay_16.txt" },
+    { label: "BG Adhyay 17", path: "lyrics/bhagvad_gita/adhyay_17.txt" },
+  ];
 
-मूढ जहीहि धनागमतृष्णां
-कुरु सद्बुद्धिं मनसि वितृष्णाम् .
-यल्लभसे निजकर्मोपात्तं
-वित्तं तेन विनोदय चित्तम् .. २..(2)
+  const picker  = document.getElementById("picker");
+  const content = document.getElementById("content");
+  const status  = document.getElementById("status");
 
-यावद्वित्तोपार्जन सक्तः
-स्तावन्निज परिवारो रक्तः .
-पश्चाज्जीवति जर्जर देहे
-वार्तां कोऽपि न पृच्छति गेहे .. 3..
+  MANIFEST.forEach(({ label, path }) => {
+    const opt = document.createElement("option");
+    opt.value = path;
+    opt.textContent = label;
+    picker.appendChild(opt);
+  });
 
-मा कुरु धन जन यौवन गर्वं
-हरति निमेषात्कालः सर्वम् .
-मायामयमिदमखिलं हित्वा
-ब्रह्मपदं त्वं प्रविश विदित्वा .. 4..
-
-सुर मंदिर तरु मूल निवासः
-शय्या भूतल मजिनं वासः .
-सर्व परिग्रह भोग त्यागः
-कस्य सुखं न करोति विरागः .. 5..
-
-भगवद् गीता किञ्चिदधीता
-गङ्गा जललव कणिकापीता .
-सकृदपि येन मुरारि समर्चा
-क्रियते तस्य यमेन न चर्चा .. 6..
-
-पुनरपि जननं पुनरपि मरणं
-पुनरपि जननी जठरे शयनम् .
-इह संसारे बहुदुस्तारे
-कृपयाऽपारे पाहि मुरारे .. 7..
-
-गेयं गीता नाम सहस्रं
-ध्येयं श्रीपति रूपमजस्रम् .
-नेयं सज्जन सङ्गे चित्तं
-देयं दीनजनाय च वित्तम् .. 8..
-
-अर्थमनर्थं भावय नित्यं
-नास्तिततः सुखलेशः सत्यम् .
-पुत्रादपि धन भाजां भीतिः
-सर्वत्रैषा विहिआ रीतिः .. 9..
-
-गुरुचरणाम्बुज निर्भर भकतः
-सारादचिराद्भव मुक्तः .
-सेन्द्रियमानस नियमादेवं
-द्रक्ष्यसि निज हृदयस्थं देवम् .. 10..
-      `
-    },
-    pilu: {
-      title: "Raag Pilu",
-      lyrics: `Line 1
-Line 2
-
-Line 3`
-    },
-    shiv: {
-      title: "KrishnaShtakam",
-      lyrics: `
-     भजे व्रजैकमण्डनं समस्तपापखण्डनं
-स्वभक्तचित्तरंजनं सदैव नन्दनन्दनम् |
-सुपिच्छगुच्छमस्तकं सुनादवेणुहस्तकं
-अनंगरंगसागरं नमामि कृष्णनागरम् || १ ||
-
-मनोजगर्वमोचनं विशाललोललोचनं
-विधूतगोपशोचनं नमामि पद्मलोचनम् |
-करारविन्दभूधरं स्मितावलोकसुन्दरं
-महेन्द्रमानदारणं नमामि कृष्णावारणम् || २ ||
-
-कदम्बसूनकुण्डलं सुचारुगण्डमण्डलं
-व्रजांगनैकवल्लभं नमामि कृष्णदुर्लभम् |
-यशोदया समोदया सगोपया सनन्दया
-युतं सुखैकदायकं नमामि गोपनायकम् || ३ ||
-
-सदैव पादपंकजं मदीय मानसे निजं
-दधानमुक्तमालकं नमामि नन्दबालकम् |
-समस्तदोषशोषणं समस्तलोकपोषणं
-समस्तगोपमानसं नमामि नन्दलालसम् || ४ ||
-
-भुवो भरावतारकं भवाब्धिकर्णधारकं
-यशोमतीकिशोरकं नमामि चित्तचोरकम् |
-दृगन्तकान्तभंगिनं सदा सदालिसंगिनं
-दिने दिने नवं नवं नमामि नन्दसम्भवम् || ५ ||
-
-गुणाकरं सुखाकरं कृपाकरं कृपापरं
-सुरद्विषन्निकन्दनं नमामि गोपनन्दनम् |
-नवीनगोपनागरं नवीनकेलिलम्पटं
-नमामि मेघसुन्दरं तडित्प्रभालसत्पटम् || ६ ||
-
-समस्तगोपनन्दनं हृदम्बुजैकमोदनं
-नमामि कुंजमध्यगं प्रसन्नभानुशोभनम् |
-निकामकामदायकं दृगन्तचारुसायकं
-रसालवेणुगायकं नमामि कुंजनायकम् || ७ ||
-
-विदग्धगोपिकामनोमनोज्ञतल्पशायिनं
-नमामि कुंजकानने प्रव्रद्धवन्हिपायिनम् |
-किशोरकान्तिरंजितं दृअगंजनं सुशोभितं
-गजेन्द्रमोक्षकारिणं नमामि श्रीविहारिणम् || ८ ||
-
-यदा तदा यथा तथा तथैव कृष्णसत्कथा
-मया सदैव गीयतां तथा कृपा विधीयताम् |
-प्रमाणिकाष्टकद्वयं जपत्यधीत्य यः पुमान
-भवेत्स नन्दनन्दने भवे भवे सुभक्तिमान || ९ ||
-
-इति श्रीमद शंकराचार्यकृतं श्रीकृष्णाष्टकं सम्पूर्णम् 
-      `
+  async function loadFile(path) {
+    if (!path) { content.textContent = ""; return; }
+    status.textContent = "Loading…";
+    content.textContent = "";
+    try {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error(res.status);
+      content.textContent = await res.text();
+      status.textContent = "";
+    } catch (e) {
+      status.textContent = "Could not load file.";
     }
-  };
-
-  function loadSong(key) {
-    document.getElementById("title").innerText = songs[key].title;
-    document.getElementById("lyrics").innerText = songs[key].lyrics;
   }
 
   function toggleTheme() {
-    const root = document.documentElement;
-    if (root.style.getPropertyValue('--bg') === 'white') {
-      root.style.setProperty('--bg', 'black');
-      root.style.setProperty('--text', 'white');
-    } else {
-      root.style.setProperty('--bg', 'white');
-      root.style.setProperty('--text', 'black');
-    }
+    document.body.classList.toggle("light");
   }
-
-  // load default
-  loadSong("yaman");
 </script>
 
 </body>
