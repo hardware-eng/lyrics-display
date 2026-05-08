@@ -43,8 +43,44 @@
       "label": "Great People",
       "files": [
         {
+          "label": "Raghuvansham Sarga 01",
+          "path": "lyrics/great_people/0400_CE_kalidasa/raghuvansham_sarga_01.txt"
+        },
+        {
+          "label": "Bhaj Govindam",
+          "path": "lyrics/great_people/0700_CE_shankaracharya/bhaj_govindam.txt"
+        },
+        {
           "label": "Bhaje Vrajaika Mandanam",
           "path": "lyrics/great_people/0700_CE_shankaracharya/bhaje_vrajaika_mandanam.txt"
+        },
+        {
+          "label": "Guru Ashtakam",
+          "path": "lyrics/great_people/0700_CE_shankaracharya/guru_ashtakam.txt"
+        },
+        {
+          "label": "Veda Sara Shiva Stav",
+          "path": "lyrics/great_people/0700_CE_shankaracharya/veda_sara_shiva_stav.txt"
+        },
+        {
+          "label": "Abhanga Kirtan Kari",
+          "path": "lyrics/great_people/1270_naamdev/abhanga_kirtan_kari.txt"
+        },
+        {
+          "label": "Aajani Ghadi",
+          "path": "lyrics/great_people/1414_narasinh_maheta/aajani_ghadi.txt"
+        },
+        {
+          "label": "Aajani Ghadi 02",
+          "path": "lyrics/great_people/1414_narasinh_maheta/aajani_ghadi_02.txt"
+        },
+        {
+          "label": "Nagar Nandaji Na Lal",
+          "path": "lyrics/great_people/1414_narasinh_maheta/nagar_nandaji_na_lal.txt"
+        },
+        {
+          "label": "When I Asked God",
+          "path": "lyrics/great_people/1863_swami_vivekananda/when_I_asked_God.txt"
         }
       ]
     }
