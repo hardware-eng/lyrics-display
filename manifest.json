@@ -13,8 +13,16 @@
           "path": "lyrics/bhagvad_gita/adhyay_03.txt"
         },
         {
+          "label": "Adhyay 05",
+          "path": "lyrics/bhagvad_gita/adhyay_05.txt"
+        },
+        {
           "label": "Adhyay 10",
           "path": "lyrics/bhagvad_gita/adhyay_10.txt"
+        },
+        {
+          "label": "Adhyay 12",
+          "path": "lyrics/bhagvad_gita/adhyay_12.txt"
         },
         {
           "label": "Adhyay 15",
@@ -27,6 +35,16 @@
         {
           "label": "Adhyay 17",
           "path": "lyrics/bhagvad_gita/adhyay_17.txt"
+        }
+      ]
+    },
+    {
+      "id": "great_people",
+      "label": "Great People",
+      "files": [
+        {
+          "label": "Bhaje Vrajaika Mandanam",
+          "path": "lyrics/great_people/0700_CE_shankaracharya/bhaje_vrajaika_mandanam.txt"
         }
       ]
     }
