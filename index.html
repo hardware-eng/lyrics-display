@@ -11,7 +11,6 @@
       --item-bg: #1a1a1a;
       --item-hover: #2a2a2a;
       --bar-bg: #111;
-      --muted: #888;
     }
     body.light {
       --bg: #f5f5f5;
@@ -19,7 +18,6 @@
       --item-bg: #fff;
       --item-hover: #e8e8e8;
       --bar-bg: #ddd;
-      --muted: #666;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -30,8 +28,6 @@
       line-height: 1.8;
       transition: background 0.2s, color 0.2s;
     }
-
-    /* ── top bar ── */
     .bar {
       display: flex;
       align-items: center;
@@ -59,8 +55,6 @@
       background: transparent;
       color: var(--text);
     }
-
-    /* ── list items ── */
     .list {
       display: flex;
       flex-direction: column;
@@ -80,8 +74,6 @@
       cursor: pointer;
     }
     .list-item:active { background: var(--item-hover); }
-
-    /* ── content view ── */
     #content-text {
       white-space: pre-wrap;
       word-break: break-word;
@@ -89,13 +81,12 @@
       font-size: 28px;
       line-height: 1.9;
     }
-
     .hidden { display: none; }
   </style>
 </head>
 <body>
 
-<!-- View: folder list -->
+<!-- Level 1: top-level folders -->
 <div id="v-folders">
   <div class="bar">
     <span class="bar-title">Lyrics</span>
@@ -104,17 +95,27 @@
   <div id="folder-list" class="list"></div>
 </div>
 
-<!-- View: file list -->
-<div id="v-files" class="hidden">
+<!-- Level 2: person/subfolder list (for nested folders like great_people) -->
+<div id="v-subfolders" class="hidden">
   <div class="bar">
     <button onclick="show('folders')">←</button>
+    <span id="lbl-parent" class="bar-title"></span>
+    <button onclick="toggleTheme()">☀/☾</button>
+  </div>
+  <div id="subfolder-list" class="list"></div>
+</div>
+
+<!-- Level 2 or 3: file list -->
+<div id="v-files" class="hidden">
+  <div class="bar">
+    <button id="files-back-btn" onclick="filesBack()">←</button>
     <span id="lbl-folder" class="bar-title"></span>
     <button onclick="toggleTheme()">☀/☾</button>
   </div>
   <div id="file-list" class="list"></div>
 </div>
 
-<!-- View: content -->
+<!-- Content -->
 <div id="v-content" class="hidden">
   <div class="bar">
     <button onclick="show('files')">←</button>
@@ -126,7 +127,7 @@
 
 <script>
   let manifest = null;
-  let currentFolder = null;
+  let filesBackTarget = 'folders'; // where ← on file list returns to
 
   async function init() {
     try {
@@ -147,11 +148,34 @@
   }
 
   function openFolder(folder) {
-    currentFolder = folder;
-    document.getElementById('lbl-folder').textContent = folder.label;
+    if (folder.files) {
+      // Leaf folder — go straight to file list
+      filesBackTarget = 'folders';
+      showFileList(folder.label, folder.files);
+    } else if (folder.folders) {
+      // Nested folder — show person/subfolder list
+      document.getElementById('lbl-parent').textContent = folder.label;
+      const list = document.getElementById('subfolder-list');
+      list.innerHTML = '';
+      folder.folders.forEach(sub => {
+        const btn = document.createElement('button');
+        btn.className = 'list-item';
+        btn.textContent = sub.label;
+        btn.onclick = () => {
+          filesBackTarget = 'subfolders';
+          showFileList(sub.label, sub.files);
+        };
+        list.appendChild(btn);
+      });
+      show('subfolders');
+    }
+  }
+
+  function showFileList(label, files) {
+    document.getElementById('lbl-folder').textContent = label;
     const list = document.getElementById('file-list');
     list.innerHTML = '';
-    folder.files.forEach(file => {
+    files.forEach(file => {
       const btn = document.createElement('button');
       btn.className = 'list-item';
       btn.textContent = file.label;
@@ -174,8 +198,12 @@
     }
   }
 
+  function filesBack() {
+    show(filesBackTarget);
+  }
+
   function show(view) {
-    ['folders', 'files', 'content'].forEach(v => {
+    ['folders', 'subfolders', 'files', 'content'].forEach(v => {
       document.getElementById('v-' + v).classList.toggle('hidden', v !== view);
     });
     window.scrollTo(0, 0);
