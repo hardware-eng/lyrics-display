@@ -8,118 +8,184 @@
     :root {
       --bg: #000;
       --text: #fff;
+      --item-bg: #1a1a1a;
+      --item-hover: #2a2a2a;
+      --bar-bg: #111;
       --muted: #888;
-      --btn-bg: #222;
-      --btn-text: #fff;
-      --select-bg: #222;
     }
     body.light {
-      --bg: #fff;
+      --bg: #f5f5f5;
       --text: #000;
-      --muted: #555;
-      --btn-bg: #ddd;
-      --btn-text: #000;
-      --select-bg: #eee;
+      --item-bg: #fff;
+      --item-hover: #e8e8e8;
+      --bar-bg: #ddd;
+      --muted: #666;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: var(--bg);
       color: var(--text);
       font-family: Arial, sans-serif;
-      font-size: 30px;
+      font-size: 28px;
       line-height: 1.8;
-      padding: 16px;
       transition: background 0.2s, color 0.2s;
     }
-    .top-bar {
+
+    /* ── top bar ── */
+    .bar {
       display: flex;
-      gap: 10px;
       align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
+      gap: 10px;
+      background: var(--bar-bg);
+      padding: 10px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
-    select {
+    .bar-title {
       flex: 1;
-      font-size: 22px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: none;
-      background: var(--select-bg);
-      color: var(--text);
-      min-width: 0;
+      font-size: 26px;
+      font-weight: bold;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    button {
-      font-size: 22px;
-      padding: 10px 18px;
+    .bar button {
+      font-size: 26px;
+      padding: 8px 16px;
       border-radius: 10px;
       border: none;
       cursor: pointer;
-      background: var(--btn-bg);
-      color: var(--btn-text);
-      white-space: nowrap;
+      background: transparent;
+      color: var(--text);
     }
-    #content {
+
+    /* ── list items ── */
+    .list {
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      gap: 8px;
+    }
+    .list-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 18px 20px;
+      font-size: 28px;
+      background: var(--item-bg);
+      color: var(--text);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .list-item:active { background: var(--item-hover); }
+
+    /* ── content view ── */
+    #content-text {
       white-space: pre-wrap;
       word-break: break-word;
-      padding-top: 8px;
+      padding: 16px;
+      font-size: 28px;
+      line-height: 1.9;
     }
-    #status {
-      color: var(--muted);
-      font-size: 20px;
-      padding: 20px 0;
-    }
+
+    .hidden { display: none; }
   </style>
 </head>
 <body>
 
-<div class="top-bar">
-  <select id="picker" onchange="loadFile(this.value)">
-    <option value="">— select —</option>
-  </select>
-  <button onclick="toggleTheme()">☀ / ☾</button>
+<!-- View: folder list -->
+<div id="v-folders">
+  <div class="bar">
+    <span class="bar-title">Lyrics</span>
+    <button onclick="toggleTheme()">☀/☾</button>
+  </div>
+  <div id="folder-list" class="list"></div>
 </div>
 
-<div id="status"></div>
-<div id="content"></div>
+<!-- View: file list -->
+<div id="v-files" class="hidden">
+  <div class="bar">
+    <button onclick="show('folders')">←</button>
+    <span id="lbl-folder" class="bar-title"></span>
+    <button onclick="toggleTheme()">☀/☾</button>
+  </div>
+  <div id="file-list" class="list"></div>
+</div>
+
+<!-- View: content -->
+<div id="v-content" class="hidden">
+  <div class="bar">
+    <button onclick="show('files')">←</button>
+    <span id="lbl-file" class="bar-title"></span>
+    <button onclick="toggleTheme()">☀/☾</button>
+  </div>
+  <div id="content-text">Loading…</div>
+</div>
 
 <script>
-  const MANIFEST = [
-    { label: "BG Adhyay 01", path: "lyrics/bhagvad_gita/adhyay_01.txt" },
-    { label: "BG Adhyay 03", path: "lyrics/bhagvad_gita/adhyay_03.txt" },
-    { label: "BG Adhyay 10", path: "lyrics/bhagvad_gita/adhyay_10.txt" },
-    { label: "BG Adhyay 15", path: "lyrics/bhagvad_gita/adhyay_15.txt" },
-    { label: "BG Adhyay 16", path: "lyrics/bhagvad_gita/adhyay_16.txt" },
-    { label: "BG Adhyay 17", path: "lyrics/bhagvad_gita/adhyay_17.txt" },
-  ];
+  let manifest = null;
+  let currentFolder = null;
 
-  const picker  = document.getElementById("picker");
-  const content = document.getElementById("content");
-  const status  = document.getElementById("status");
-
-  MANIFEST.forEach(({ label, path }) => {
-    const opt = document.createElement("option");
-    opt.value = path;
-    opt.textContent = label;
-    picker.appendChild(opt);
-  });
-
-  async function loadFile(path) {
-    if (!path) { content.textContent = ""; return; }
-    status.textContent = "Loading…";
-    content.textContent = "";
+  async function init() {
     try {
-      const res = await fetch(path);
+      const res = await fetch('manifest.json');
+      manifest = await res.json();
+    } catch(e) {
+      document.getElementById('folder-list').textContent = 'Could not load manifest.';
+      return;
+    }
+    const list = document.getElementById('folder-list');
+    manifest.folders.forEach(folder => {
+      const btn = document.createElement('button');
+      btn.className = 'list-item';
+      btn.textContent = folder.label;
+      btn.onclick = () => openFolder(folder);
+      list.appendChild(btn);
+    });
+  }
+
+  function openFolder(folder) {
+    currentFolder = folder;
+    document.getElementById('lbl-folder').textContent = folder.label;
+    const list = document.getElementById('file-list');
+    list.innerHTML = '';
+    folder.files.forEach(file => {
+      const btn = document.createElement('button');
+      btn.className = 'list-item';
+      btn.textContent = file.label;
+      btn.onclick = () => openFile(file);
+      list.appendChild(btn);
+    });
+    show('files');
+  }
+
+  async function openFile(file) {
+    document.getElementById('lbl-file').textContent = file.label;
+    document.getElementById('content-text').textContent = 'Loading…';
+    show('content');
+    try {
+      const res = await fetch(file.path);
       if (!res.ok) throw new Error(res.status);
-      content.textContent = await res.text();
-      status.textContent = "";
-    } catch (e) {
-      status.textContent = "Could not load file.";
+      document.getElementById('content-text').textContent = await res.text();
+    } catch(e) {
+      document.getElementById('content-text').textContent = 'Could not load file.';
     }
   }
 
-  function toggleTheme() {
-    document.body.classList.toggle("light");
+  function show(view) {
+    ['folders', 'files', 'content'].forEach(v => {
+      document.getElementById('v-' + v).classList.toggle('hidden', v !== view);
+    });
+    window.scrollTo(0, 0);
   }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+
+  init();
 </script>
 
 </body>

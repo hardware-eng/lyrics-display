@@ -1,0 +1,34 @@
+{
+  "folders": [
+    {
+      "id": "bhagvad_gita",
+      "label": "Bhagvad Gita",
+      "files": [
+        {
+          "label": "Adhyay 01",
+          "path": "lyrics/bhagvad_gita/adhyay_01.txt"
+        },
+        {
+          "label": "Adhyay 03",
+          "path": "lyrics/bhagvad_gita/adhyay_03.txt"
+        },
+        {
+          "label": "Adhyay 10",
+          "path": "lyrics/bhagvad_gita/adhyay_10.txt"
+        },
+        {
+          "label": "Adhyay 15",
+          "path": "lyrics/bhagvad_gita/adhyay_15.txt"
+        },
+        {
+          "label": "Adhyay 16",
+          "path": "lyrics/bhagvad_gita/adhyay_16.txt"
+        },
+        {
+          "label": "Adhyay 17",
+          "path": "lyrics/bhagvad_gita/adhyay_17.txt"
+        }
+      ]
+    }
+  ]
+}
