@@ -84,15 +84,12 @@ def collect(dry: bool) -> None:
     if not dry:
         print(f"""
 ── Next steps to publish ─────────────────────────────────────────────
-1. Sync lyrics + manifest to repo:
+1. Sync everything to repo:
      rsync -av --delete \\
-       --exclude=.git/ --exclude=memory/ --exclude=index.txt \\
+       --exclude=.git/ --exclude=memory/ \\
        {STAGING_DIR}/ ~/lyrics-display/
 
-2. Copy HTML:
-     cp {STAGING_DIR}/index.txt ~/lyrics-display/index.html
-
-3. Commit and push:
+2. Commit and push:
      cd ~/lyrics-display && git add -A && git commit -m "update lyrics" && git push
 ──────────────────────────────────────────────────────────────────────
 """)
