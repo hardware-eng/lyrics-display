@@ -95,10 +95,34 @@ def collect(dry: bool) -> None:
 """)
 
 
-def _file_entry(f: Path) -> dict:
-    rel_file = f.relative_to(DEST_ROOT)
-    return {"label": to_label(f.stem),
-            "path": "lyrics/" + str(rel_file).replace("\\", "/")}
+def load_mp3_urls() -> dict:
+    """
+    Walk source tree for z_mp3/urls.json files.
+    Returns {(top_folder_name, stem): url}.
+    """
+    urls = {}
+    for urls_file in sorted(SPIRITUAL_DIR.rglob("z_mp3/urls.json")):
+        try:
+            urls_file.relative_to(STAGING_DIR)
+            continue  # skip staging area
+        except ValueError:
+            pass
+        top_folder = urls_file.relative_to(SPIRITUAL_DIR).parts[0]
+        data = json.loads(urls_file.read_text(encoding="utf-8"))
+        for stem, url in data.items():
+            urls[(top_folder, stem)] = url
+    return urls
+
+
+def _file_entry(f: Path, mp3_urls: dict) -> dict:
+    rel_file  = f.relative_to(DEST_ROOT)
+    top_folder = rel_file.parts[0]
+    entry = {"label": to_label(f.stem),
+             "path": "lyrics/" + str(rel_file).replace("\\", "/")}
+    url = mp3_urls.get((top_folder, f.stem))
+    if url:
+        entry["mp3"] = url
+    return entry
 
 
 def build_manifest() -> dict:
@@ -106,8 +130,10 @@ def build_manifest() -> dict:
     Build a manifest that preserves folder hierarchy.
     - Leaf folder (only .txt files, no subdirs): {"id", "label", "files"}
     - Nested folder (has subdirs with .txt files): {"id", "label", "folders"}
+    Each file entry gets an optional "mp3" key when a URL exists in z_mp3/urls.json.
     """
-    folders = []
+    mp3_urls = load_mp3_urls()
+    folders  = []
     if not DEST_ROOT.exists():
         return {"folders": folders}
 
@@ -129,7 +155,7 @@ def build_manifest() -> dict:
                     subfolders.append({
                         "id":    sub.name,
                         "label": to_label(sub.name),
-                        "files": [_file_entry(f) for f in sub_files],
+                        "files": [_file_entry(f, mp3_urls) for f in sub_files],
                     })
             if subfolders:
                 folders.append({"id": folder_dir.name, "label": label,
@@ -137,7 +163,7 @@ def build_manifest() -> dict:
         elif direct:
             # Leaf folder — files sit directly here
             folders.append({"id": folder_dir.name, "label": label,
-                            "files": [_file_entry(f) for f in direct]})
+                            "files": [_file_entry(f, mp3_urls) for f in direct]})
 
     return {"folders": folders}
 
