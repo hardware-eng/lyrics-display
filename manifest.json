@@ -6,35 +6,43 @@
       "files": [
         {
           "label": "Adhyay 01",
-          "path": "lyrics/bhagvad_gita/adhyay_01.txt"
+          "path": "lyrics/bhagvad_gita/adhyay_01.txt",
+          "mp3": "https://pub-48bdf4346f5742e186568c99fc8d1a18.r2.dev/bhagvad_gita/adhyay_01.mp3"
         },
         {
           "label": "Adhyay 03",
-          "path": "lyrics/bhagvad_gita/adhyay_03.txt"
+          "path": "lyrics/bhagvad_gita/adhyay_03.txt",
+          "mp3": "https://pub-48bdf4346f5742e186568c99fc8d1a18.r2.dev/bhagvad_gita/adhyay_03.mp3"
         },
         {
           "label": "Adhyay 05",
-          "path": "lyrics/bhagvad_gita/adhyay_05.txt"
+          "path": "lyrics/bhagvad_gita/adhyay_05.txt",
+          "mp3": "https://pub-48bdf4346f5742e186568c99fc8d1a18.r2.dev/bhagvad_gita/adhyay_05.mp3"
         },
         {
           "label": "Adhyay 10",
-          "path": "lyrics/bhagvad_gita/adhyay_10.txt"
+          "path": "lyrics/bhagvad_gita/adhyay_10.txt",
+          "mp3": "https://pub-48bdf4346f5742e186568c99fc8d1a18.r2.dev/bhagvad_gita/adhyay_10.mp3"
         },
         {
           "label": "Adhyay 12",
-          "path": "lyrics/bhagvad_gita/adhyay_12.txt"
+          "path": "lyrics/bhagvad_gita/adhyay_12.txt",
+          "mp3": "https://pub-48bdf4346f5742e186568c99fc8d1a18.r2.dev/bhagvad_gita/adhyay_12.mp3"
         },
         {
           "label": "Adhyay 15",
-          "path": "lyrics/bhagvad_gita/adhyay_15.txt"
+          "path": "lyrics/bhagvad_gita/adhyay_15.txt",
+          "mp3": "https://pub-48bdf4346f5742e186568c99fc8d1a18.r2.dev/bhagvad_gita/adhyay_15.mp3"
         },
         {
           "label": "Adhyay 16",
-          "path": "lyrics/bhagvad_gita/adhyay_16.txt"
+          "path": "lyrics/bhagvad_gita/adhyay_16.txt",
+          "mp3": "https://pub-48bdf4346f5742e186568c99fc8d1a18.r2.dev/bhagvad_gita/adhyay_16.mp3"
         },
         {
           "label": "Adhyay 17",
-          "path": "lyrics/bhagvad_gita/adhyay_17.txt"
+          "path": "lyrics/bhagvad_gita/adhyay_17.txt",
+          "mp3": "https://pub-48bdf4346f5742e186568c99fc8d1a18.r2.dev/bhagvad_gita/adhyay_17.mp3"
         }
       ]
     },
