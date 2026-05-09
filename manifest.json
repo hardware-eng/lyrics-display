@@ -113,6 +113,44 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pushtimarg",
+      "label": "Pushtimarg",
+      "folders": [
+        {
+          "id": "bhajans",
+          "label": "Bhajans",
+          "files": [
+            {
+              "label": "Ati Re Aanand Bharya",
+              "path": "lyrics/pushtimarg/bhajans/ati_re_aanand_bharya.txt"
+            },
+            {
+              "label": "Vallabh Ji Avyane Motide Text",
+              "path": "lyrics/pushtimarg/bhajans/vallabh_ji_Avyane_motide_text.txt"
+            },
+            {
+              "label": "Yamuna Jal Ma Kesar Godi",
+              "path": "lyrics/pushtimarg/bhajans/yamuna_jal_ma_kesar_godi.txt"
+            }
+          ]
+        },
+        {
+          "id": "byMahaprabhuji",
+          "label": "Bymahaprabhuji",
+          "files": [
+            {
+              "label": "Krishnashraya",
+              "path": "lyrics/pushtimarg/byMahaprabhuji/krishnashraya.txt"
+            },
+            {
+              "label": "Madhurashtakam",
+              "path": "lyrics/pushtimarg/byMahaprabhuji/madhurashtakam.txt"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
