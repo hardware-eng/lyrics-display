@@ -98,6 +98,9 @@
       top: 56px;
       z-index: 9;
     }
+    #audio-player.no-audio {
+      opacity: 0.45;
+    }
     #btn-play {
       font-size: 34px;
       width: 64px;
@@ -108,6 +111,10 @@
       background: var(--progress-fill);
       color: #fff;
       flex-shrink: 0;
+    }
+    #audio-player.no-audio #btn-play {
+      cursor: default;
+      background: var(--progress-bg);
     }
     #progress-wrap {
       flex: 1;
@@ -122,6 +129,7 @@
       cursor: pointer;
       position: relative;
     }
+    #audio-player.no-audio #progress-bar { cursor: default; }
     #progress-fill {
       height: 100%;
       background: var(--progress-fill);
@@ -260,13 +268,20 @@
       audio.src = file.mp3;
       audio.load();
       btnPlay.textContent = '▶';
+      btnPlay.onclick = togglePlay;
       document.getElementById('progress-fill').style.width = '0%';
       document.getElementById('time-display').textContent = '0:00';
       player.classList.remove('hidden');
+      player.classList.remove('no-audio');
     } else {
       audio.pause();
       audio.src = '';
-      player.classList.add('hidden');
+      btnPlay.textContent = '✕';
+      btnPlay.onclick = null;
+      document.getElementById('progress-fill').style.width = '0%';
+      document.getElementById('time-display').textContent = 'Audio not available';
+      player.classList.remove('hidden');
+      player.classList.add('no-audio');
     }
 
     try {
